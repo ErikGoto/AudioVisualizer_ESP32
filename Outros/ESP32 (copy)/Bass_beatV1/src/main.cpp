@@ -1,24 +1,19 @@
 #include <Arduino.h>
 #include "Adafruit_NeoPixel.h"
 
-#define pinLed 22
-#define pinLed2 18
 #define pinBot 4
 
 //Pinos led
 #define pinLED 23 //Pino SIG da cascata de led
-#define ledCount 10
+#define ledCount 24
 Adafruit_NeoPixel strip(ledCount, pinLED, NEO_GRB + NEO_KHZ800);
 
 void setup() {
-  pinMode(pinLed, OUTPUT);
-  pinMode(pinLed2, OUTPUT);
-
   pinMode(pinBot, INPUT_PULLUP);
 
   Serial.begin(9600);
 
-  strip.setBrightness(5);
+  strip.setBrightness(100);
   strip.begin();
   strip.show();
 }
@@ -34,11 +29,11 @@ boolean sentidoBass = 0;
 int red = 0;
 int blue = 0;
 int green = 0;
-int countBeat = 0;
 
+int matrixLed[5] = {0, 0, 0, 0, 0};
+int countBeat = 0;
 void loop() {
   if(Serial.available()){
-    strip.setBrightness(100);
 
     if(Serial.read() == 0xff){
       for(int i=0; i<3; i++){
@@ -47,35 +42,35 @@ void loop() {
       }
     }
 
-
+    //Beat
     if(inSerial[0] == 1){
-      red = random(0, 1000);
-      green = random(0, 255);
-      blue = random(0, 200);
+      matrixLed[0] = 1;
     }
-
-    //[Beat] Acende a fita completa
-    if((millis() - temp) > 80){
+    if((millis() - temp) > 50){
       temp = millis();
-      
-      strip.setPixelColor(10-countBeat, red, green, blue);
+
+      if(matrixLed[countBeat] == 1){
+        strip.setPixelColor(10-countBeat, red, green, blue);
+        matrixLed[countBeat] = 0;
+        matrixLed[countBeat+1] = 1;
+
+        strip.show();
+      }
+
+      if(matrixLed[countBeat] == 0){
+        strip.setPixelColor(10-countBeat, 0, 0, 0);
+      }
       countBeat++;
-      if(countBeat > 10){
+
+      if(countBeat > 6){
         countBeat = 0;
+        red = random(0, 255);
+        green = random(0, 255);
+        blue = random(0, 255);
       }
     }
 
-    //[Beat] Um led percorrendo a fita
-    /*if((millis() - temp) > 60){
-      temp = millis();
-    
-      strip.setPixelColor(10-countBeat, red, green, blue);
-      strip.setPixelColor(11-countBeat, 0, 0, 0);
-      countBeat++;
-      if(countBeat > 10){
-        countBeat = 0;
-      }
-    }*/
+
 
 
     //Bass
@@ -84,13 +79,12 @@ void loop() {
       sentidoBass = 1;
     }
 
-    if(millis() - tempBass > 20){
+    if(millis() - tempBass > 15){
       tempBass = millis();
       if(sentidoBass == 1){
-        strip.setPixelColor(indexBass, 255, 0, 50);
-        countBeat = 0;
+        strip.setPixelColor(indexBass, 200, 0, 150);
         strip.show();
-        if(indexBass < 9)
+        if(indexBass < 5)
           indexBass++;
       }else{
         strip.setPixelColor(indexBass, 0, 0, 0);
@@ -99,9 +93,13 @@ void loop() {
           indexBass--;
       }
     }
-    if(indexBass > 8){
+    if(indexBass > 4){
       sentidoBass = 0;
     }
+    
+
+
+    //strip.show();
 
     delay(5);
   }
