@@ -8,5 +8,5 @@
   A fita de led usada foi um módulo da Shield Grove, mas pode ser substituída por qualquer outra que funcione com a biblioteca NeoPixel da Adafruit
 
 Vídeo de demonstração se encontra aqui:
-  -[v0.5 - Fita de Led](https://www.youtube.com/watch?v=Zr_HBXlm1V4)
-  -Anel de Led
+  - [v0.5 - Fita de Led](https://www.youtube.com/watch?v=Zr_HBXlm1V4)
+  - Anel de Led
