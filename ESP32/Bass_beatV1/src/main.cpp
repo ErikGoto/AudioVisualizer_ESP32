@@ -9,7 +9,7 @@ Adafruit_NeoPixel strip(ledCount, pinLED, NEO_GRB + NEO_KHZ800);
 void setup() {
   Serial.begin(9600);
 
-  strip.setBrightness(100);
+  strip.setBrightness(20);
   strip.begin();
   strip.show();
 }
@@ -21,11 +21,14 @@ int tempBass = 0;
 boolean sentidoBass = 0;
 
 int tempBeat = 0;
+int indexBeat = 9;
+boolean sentidoBeat = 0;
 
 int red = 0;
 int blue = 0;
 int green = 0;
 
+int brightness = 2;
 void loop() {
   if(Serial.available()){
 
@@ -44,14 +47,14 @@ void loop() {
 
       tempBeat = millis();
       for(int i = 9; i <= 14; i++){
-        strip.setPixelColor(i, red, green, blue);
-      }   
+        strip.setPixelColor(i, red/brightness, green/brightness, blue/brightness);
+      }
     }
-    if(millis() - tempBass > 25){
-      tempBeat = millis();
+    if(millis() - tempBeat > 5000){
       for(int i = 9; i <= 14; i++){
         strip.setPixelColor(i, 0, 0, 0);
-      }  
+      } 
+      strip.show();
     }
 
 
@@ -64,8 +67,8 @@ void loop() {
     if(millis() - tempBass > 15){
       tempBass = millis();
       if(sentidoBass == 1){
-        strip.setPixelColor(indexBass, 255, 0, indexBass*30);
-        strip.setPixelColor(23 - indexBass, 200, indexBass*30, 0);
+        strip.setPixelColor(indexBass, 255/brightness, 0, indexBass*30/brightness);
+        strip.setPixelColor(23 - indexBass, 200/brightness, indexBass*30/brightness, 0);
         //strip.show();
         if(indexBass <= 8)
           indexBass++;
@@ -80,6 +83,7 @@ void loop() {
     if(indexBass > 8){
       sentidoBass = 0;
     }
+
 
     strip.show();
     delay(5);
